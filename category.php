@@ -1,28 +1,27 @@
-<?php include("db_connect.php"); ?>
+<?php
+include('db_connect.php');
+
+$categoryId = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+try {
+    $stmt = $conn->prepare("SELECT * FROM products WHERE category_id = :id");
+    $stmt->execute([':id' => $categoryId]);
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Category - Christmas Store</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Category Products</title>
 </head>
 <body>
-    <header> <!-- Header content here --> </header>
-    <main>
-        <h2>Products</h2>
-        <div class="product-list">
-            <?php
-            $category_id = $_GET['cat'];
-            $result = $conn->query("SELECT * FROM products WHERE category_id = $category_id");
-            while ($row = $result->fetch_assoc()) {
-                echo "<div class='product'>";
-                echo "<h3>" . $row['name'] . "</h3>";
-                echo "<p>" . $row['description'] . "</p>";
-                echo "<p>Price: $" . $row['price'] . "</p>";
-                echo "</div>";
-            }
-            ?>
-        </div>
-    </main>
+    <h1>Category Products</h1>
+    <?php foreach ($products as $product): ?>
+        <h3><a href="product.php?id=<?php echo $product['id']; ?>"><?php echo htmlspecialchars($product['name']); ?></a></h3>
+        <p>Price: $<?php echo htmlspecialchars($product['price']); ?></p>
+    <?php endforeach; ?>
 </body>
 </html>

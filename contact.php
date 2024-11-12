@@ -1,21 +1,33 @@
-<?php include("db_connect.php"); ?>
+<?php
+include('db_connect.php');
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $message = $_POST['message'];
+
+    try {
+        $stmt = $conn->prepare("INSERT INTO contact (name, email, message) VALUES (:name, :email, :message)");
+        $stmt->execute([':name' => $name, ':email' => $email, ':message' => $message]);
+        echo "Message sent successfully!";
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+}
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Contact Us</title>
-    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header> <!-- Header content here --> </header>
-    <main>
-        <h2>Contact Us</h2>
-        <form action="submit_contact.php" method="POST">
-            <input type="text" name="name" placeholder="Your Name" required>
-            <input type="email" name="email" placeholder="Your Email" required>
-            <textarea name="message" placeholder="Your Message" required></textarea>
-            <button type="submit">Send</button>
-        </form>
-    </main>
+    <h1>Contact Us</h1>
+    <form method="POST" action="contact.php">
+        <input type="text" name="name" placeholder="Your name" required>
+        <input type="email" name="email" placeholder="Your email" required>
+        <textarea name="message" placeholder="Your message" required></textarea>
+        <button type="submit">Send Message</button>
+    </form>
 </body>
 </html>
