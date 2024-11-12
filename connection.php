@@ -1,7 +1,13 @@
 <?php
-$conn = new mysqli("localhost", "username", "password", "christmas_store");
+try {
+    // Path to the SQLite database file
+    $db_path = __DIR__ . '/db/database.db';
+    $conn = new PDO("sqlite:" . $db_path);
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    // Set error mode to exceptions for easier debugging
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "Connected to SQLite successfully.";
+} catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
 }
 ?>
